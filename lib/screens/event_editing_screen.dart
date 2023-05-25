@@ -1,5 +1,8 @@
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:workit/resources/api_calls.dart';
 import '../resources/constants.dart';
 import '../resources/functions.dart';
 import '../models/event.dart';
@@ -11,9 +14,10 @@ import '../models/project.dart';
 //  When created it calls the api and returns main page.
 
 class EventEditingScreen extends StatefulWidget {
-  final Event? event;
+  final List<Project> projects;
 
-  const EventEditingScreen({Key? key, this.event}) : super(key: key);
+  const EventEditingScreen({Key? key, required this.projects})
+      : super(key: key);
 
   @override
   State<EventEditingScreen> createState() => _EventEditingScreenState();
@@ -22,58 +26,123 @@ class EventEditingScreen extends StatefulWidget {
 class _EventEditingScreenState extends State<EventEditingScreen> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final startController = TextEditingController();
+  final endController = TextEditingController();
   late DateTime startDate;
-  late DateTime endDate;
+  late TimeOfDay startTime;
+  late TimeOfDay endTime;
+  bool allDay = false;
+  late Project project;
+  late List<DropdownMenuItem<Project>> items;
+
+  final DateFormat format = DateFormat('dd/MM/yyyy');
 
   @override
   initState() {
     super.initState();
-    if (widget.event == null) {
-      startDate = DateTime.now();
-      endDate = DateTime.now().add(const Duration(hours: 2));
-    }
+    project = widget.projects.first;
+    startDate = DateTime.now();
+    startTime = TimeOfDay(hour: 12, minute: 00);
+    endTime = TimeOfDay(hour: 14, minute: 00);
+    items = widget.projects.map<DropdownMenuItem<Project>>((Project value) {
+      return DropdownMenuItem<Project>(
+        value: value,
+        child: Text(
+          value.title,
+          style: TextStyle(fontSize: 15),
+        ),
+      );
+    }).toList();
   }
 
   @override
   void dispose() {
     titleController.dispose();
+    descriptionController.dispose();
+    startController.dispose();
+    endController.dispose();
 
     super.dispose();
   }
 
+  Future saveForm() async {
+    DateTime start;
+    DateTime? end;
+    if (!allDay) {
+      start = DateTime(startDate.year, startDate.month, startDate.day,
+          startTime.hour, startTime.minute);
+      end = DateTime(startDate.year, startDate.month, startDate.day,
+          endTime.hour, endTime.minute);
+    } else {
+      start = startDate;
+      end = null;
+    }
+
+    final event = Event(
+        title: titleController.text,
+        description: descriptionController.text,
+        allDay: allDay,
+        start: start,
+        end: end,
+        project: project);
+
+    var response = await createEvent(event.toMap());
+
+    print(response);
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size media = MediaQuery.of(context).size;
+
+    DateTime parsedTime =
+        DateFormat.jm().parse(startTime.format(context).toString());
+    String formattedTime = DateFormat('HH:mm').format(parsedTime);
+    startController.text = formattedTime;
+
+    DateTime parsedTime2 =
+        DateFormat.jm().parse(endTime.format(context).toString());
+    String formattedTime2 = DateFormat('HH:mm').format(parsedTime2);
+    endController.text = formattedTime2;
+
     return Scaffold(
-      backgroundColor: kGrey2,
+      backgroundColor: primaryColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         elevation: 0,
+        title: Text('New event', style: TextStyle(color: kGrey5)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: kGrey4,
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.transparent,
-                shadowColor: Colors.transparent,
-                elevation: 0),
+          TextButton(
             onPressed: () {
-              saveForm().then((value) => Navigator.pop(context));
+              if (_formKey.currentState!.validate()) {
+                saveForm().then((value) => Navigator.pop(context));
+              }
             },
-            icon: const Icon(Icons.done),
-            label: const Text('SAVE'),
-          ),
+            child: Text('Save',
+                style: TextStyle(
+                    color: secondaryColor, fontSize: media.height / 40)),
+          )
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
             Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
                     controller: titleController,
-                    style: const TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: media.height / 30),
                     decoration: const InputDecoration(
                       hintText: 'Add title',
                       border: UnderlineInputBorder(),
@@ -81,149 +150,189 @@ class _EventEditingScreenState extends State<EventEditingScreen> {
                     validator: (title) => title != null && title.isEmpty
                         ? 'Title cannot be empty'
                         : null,
-                    onFieldSubmitted: (_) => saveForm(),
                   ),
-                  const SizedBox(
-                    height: 40,
+                  SizedBox(
+                    height: media.height / 30,
+                  ),
+                  Text('Description',
+                      style: TextStyle(
+                          fontSize: media.height / 30, color: Colors.black54)),
+                  SizedBox(
+                    height: media.height / 40,
+                  ),
+                  TextFormField(
+                    controller: descriptionController,
+                    style: TextStyle(fontSize: media.height / 50),
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ],
               ),
             ),
-            Column(
+            SizedBox(
+              height: media.height / 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'START',
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: buildDropdownField(
-                            text: toDate(startDate),
-                            onClicked: () => pickStartDateTime(pickDate: true),
-                          ),
-                        ),
-                        Expanded(
-                          child: buildDropdownField(
-                            text: toTime(startDate),
-                            onClicked: () => pickStartDateTime(pickDate: false),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                Text(
+                  'Date',
+                  style: TextStyle(
+                      fontSize: media.height / 30, color: Colors.black54),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: DateTimeField(
+                    initialValue: startDate,
+                    resetIcon: null,
+                    format: format,
+                    onChanged: (value) {
+                      setState(() {
+                        startDate = value!;
+                      });
+                    },
+                    onShowPicker: (context, currentValue) {
+                      return showDatePicker(
+                          context: context,
+                          firstDate: DateTime(1980),
+                          initialDate: currentValue ?? DateTime.now(),
+                          lastDate: DateTime(2100));
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: media.width / 10,
+                ),
+                Row(
                   children: [
                     Text(
-                      'END',
-                      style: Theme.of(context).textTheme.headline1,
+                      'Lasts all day',
+                      style: TextStyle(
+                          fontSize: media.height / 40, color: Colors.black54),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: buildDropdownField(
-                            text: toDate(endDate),
-                            onClicked: () => pickEndDateTime(pickDate: true),
-                          ),
-                        ),
-                        Expanded(
-                          child: buildDropdownField(
-                            text: toTime(endDate),
-                            onClicked: () => pickEndDateTime(pickDate: false),
-                          ),
-                        ),
-                      ],
+                    Checkbox(
+                      fillColor:
+                          MaterialStateProperty.all<Color>(secondaryColor),
+                      checkColor: Colors.white,
+                      value: allDay,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          allDay = value!;
+                        });
+                      },
                     ),
                   ],
                 ),
               ],
             ),
+            SizedBox(
+              height: media.height / 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Period',
+                  style: TextStyle(
+                      fontSize: media.height / 30, color: Colors.black54),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Flexible(
+                  child: TextFormField(
+                    controller: startController,
+                    style: TextStyle(color: allDay ? kGrey2 : kGrey5),
+                    enabled: !allDay,
+                    //initialValue: startTime.format(context),
+                    onTap: () async {
+                      startTime = (await showTimePicker(
+                          context: context, initialTime: startTime))!;
+                      if (startTime != null) {
+                        setState(() {
+                          DateTime parsedTime = DateFormat.jm()
+                              .parse(startTime.format(context).toString());
+                          String formattedTime =
+                              DateFormat('HH:mm').format(parsedTime);
+                          startController.text =
+                              formattedTime; //set the value of text field.
+                        });
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: media.width / 12,
+                ),
+                Text(
+                  '-',
+                  style: TextStyle(
+                      fontSize: media.height / 45,
+                      color: allDay ? kGrey2 : kGrey5),
+                ),
+                SizedBox(
+                  width: media.width / 12,
+                ),
+                Flexible(
+                  child: TextFormField(
+                    controller: endController,
+                    style: TextStyle(color: allDay ? kGrey2 : kGrey5),
+                    enabled: !allDay,
+                    //initialValue: endTime.format(context),
+                    onTap: () async {
+                      endTime = (await showTimePicker(
+                          context: context, initialTime: endTime))!;
+                      if (endTime != null) {
+                        setState(() {
+                          DateTime parsedTime = DateFormat.jm()
+                              .parse(endTime.format(context).toString());
+                          String formattedTime =
+                              DateFormat('HH:mm').format(parsedTime);
+                          endController.text =
+                              formattedTime; //set the value of text field.
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: media.height / 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Project',
+                  style: TextStyle(
+                      fontSize: media.height / 30, color: Colors.black54),
+                ),
+              ],
+            ),
+            DropdownButton<Project>(
+              isExpanded: true,
+              // Step 3.
+              value: project,
+              // Step 4.
+              items: items,
+              // Step 5.
+              onChanged: (Project? newValue) {
+                setState(() {
+                  project = newValue!;
+                });
+              },
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Future pickStartDateTime({required bool pickDate}) async {
-    final date = await pickDateTime(startDate, pickDate: pickDate);
-
-    if (date == null) return;
-    if (date.isAfter(endDate)) {
-      endDate = DateTime(
-          date.year, date.month, date.day, endDate.hour, endDate.minute);
-    }
-    setState(() => startDate = date);
-  }
-
-  Future pickEndDateTime({required bool pickDate}) async {
-    final date = await pickDateTime(
-      endDate,
-      pickDate: pickDate,
-      firstDate: pickDate ? startDate : null,
-    );
-
-    if (date == null) return;
-    if (date.isAfter(endDate)) {
-      endDate = DateTime(
-          date.year, date.month, date.day, endDate.hour, endDate.minute);
-    }
-    setState(() => endDate = date);
-  }
-
-  Widget buildDropdownField({
-    required String text,
-    required VoidCallback onClicked,
-  }) =>
-      ListTile(
-        title: Text(text),
-        trailing: Icon(Icons.arrow_drop_down),
-        onTap: onClicked,
-      );
-
-  Future<DateTime?> pickDateTime(
-    DateTime initialDate, {
-    required bool pickDate,
-    DateTime? firstDate,
-  }) async {
-    if (pickDate) {
-      final date = await showDatePicker(
-          context: context,
-          initialDate: initialDate,
-          firstDate: firstDate ?? DateTime(2015, 8),
-          lastDate: DateTime(2101));
-      if (date == null) return null;
-
-      final time =
-          Duration(hours: initialDate.hour, minutes: initialDate.minute);
-      return date.add(time);
-    } else {
-      final timeOfDay = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
-      );
-      if (timeOfDay == null) return null;
-      final date =
-          DateTime(initialDate.year, initialDate.month, initialDate.day);
-      final time = Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute);
-      return date.add(time);
-    }
-  }
-
-  Future saveForm() async {
-    final isValid = _formKey.currentState!.validate();
-    if (isValid) {
-      Project project = Project('Projecte 1', Colors.blue);
-      final event = Event(titleController.text, 'Description', startDate,
-          endDate, false, project);
-
-      print(event);
-    }
   }
 }

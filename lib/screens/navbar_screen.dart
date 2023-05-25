@@ -2,10 +2,10 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:workit/resources/widgets.dart';
 import 'package:workit/screens/profile_screen.dart';
 import 'package:workit/screens/punch_clock_screen.dart';
 import 'package:workit/screens/schedule_screen.dart';
+import 'package:workit/screens/todo_list_screen.dart';
 import '../resources/constants.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -17,11 +17,12 @@ import 'overview_screen.dart';
 class NavbarScreen extends StatelessWidget {
   NavbarScreen({Key? key}) : super(key: key);
 
-  int _page = 1;
+  int _page = 2;
 
   List<Widget> _buildScreens() {
     return [
       ScheduleScreen(),
+      TodoListScreen(),
       OverviewScreen(),
       PunchClockScreen(),
       ProfileScreen(),
@@ -35,7 +36,16 @@ class NavbarScreen extends StatelessWidget {
             size: 25,
           ),
           title: "Schedule",
-          activeColorPrimary: Colors.teal,
+          activeColorPrimary: secondaryColor,
+          inactiveColorPrimary: Colors.grey,
+        ),
+        PersistentBottomNavBarItem(
+          icon: FaIcon(
+            FontAwesomeIcons.listUl,
+            size: 25,
+          ),
+          title: "To do",
+          activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
         ),
         PersistentBottomNavBarItem(
@@ -44,7 +54,7 @@ class NavbarScreen extends StatelessWidget {
             size: 25,
           ),
           title: "Home",
-          activeColorPrimary: Colors.teal,
+          activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
           /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
@@ -59,7 +69,7 @@ class NavbarScreen extends StatelessWidget {
             size: 25,
           ),
           title: "Punch clock",
-          activeColorPrimary: Colors.teal,
+          activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
           /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
@@ -74,7 +84,7 @@ class NavbarScreen extends StatelessWidget {
             size: 25,
           ),
           title: "Profile",
-          activeColorPrimary: Colors.teal,
+          activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
           /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
@@ -98,8 +108,7 @@ class NavbarScreen extends StatelessWidget {
       confineInSafeArea: true,
       backgroundColor: Colors.white, // Default is Colors.white.
       handleAndroidBackButtonPress: true, // Default is true.
-      resizeToAvoidBottomInset:
-          true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+      //resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears. Default is false.
       stateManagement: true, // Default is true.
       hideNavigationBarWhenKeyboardShows:
           true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.

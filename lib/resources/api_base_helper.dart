@@ -8,11 +8,11 @@ import 'custom_exceptions.dart';
 //  This file has all http requests needed (for now) in the app.
 //  Basically, it uses GET and POST, but when we send a token or different data,
 //  the function changes...
-//  In the end we have a parsing function, taht returnsd our custom exceptions
+//  In the end we have a parsing function, that returns our custom exceptions
 //  when requests fail.
 
 class ApiBaseHelper {
-  final String _baseUrl = "http://172.16.19.249:8099/aguait/api/";
+  final String _baseUrl = "http://10.0.2.2:8080/";
 
   Future<dynamic> get(String url,
       [String token = '', String tokenType = '']) async {
@@ -50,6 +50,34 @@ class ApiBaseHelper {
       throw FetchDataException('No Internet connection');
     }
     print('api post recieved!');
+    return resp!;
+  }
+
+  Future put(String url, Map? data) async {
+    var resp;
+    var body = json.encode(
+        data); //data example: Map data = {"email": mail, "password": password};
+    try {
+      var response = await http.put(Uri.parse(_baseUrl + url),
+          headers: {"Content-Type": "application/json"}, body: body);
+      resp = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    print('api put recieved!');
+    return resp!;
+  }
+
+  Future delete(String url) async {
+    var resp;
+    try {
+      var response = await http.delete(Uri.parse(_baseUrl + url),
+          headers: {"Content-Type": "application/json"});
+      resp = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    print('api delete recieved!');
     return resp!;
   }
 
