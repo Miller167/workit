@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:workit/resources/api_calls.dart';
 import '../resources/constants.dart';
-import '../resources/functions.dart';
 import '../models/event.dart';
 import '../models/project.dart';
 
@@ -43,8 +42,8 @@ class _EventEditingScreenState extends State<EventEditingScreen> {
     super.initState();
     project = widget.projects.first;
     startDate = DateTime.now();
-    startTime = TimeOfDay(hour: 12, minute: 00);
-    endTime = TimeOfDay(hour: 14, minute: 00);
+    startTime = TimeOfDay.now();
+    endTime = TimeOfDay(hour: startTime.hour + 2, minute: startTime.minute);
     items = widget.projects.map<DropdownMenuItem<Project>>((Project value) {
       return DropdownMenuItem<Project>(
         value: value,
@@ -85,7 +84,8 @@ class _EventEditingScreenState extends State<EventEditingScreen> {
         allDay: allDay,
         start: start,
         end: end,
-        project: project);
+        project: project,
+        user: user);
 
     var response = await createEvent(event.toMap());
 
@@ -96,13 +96,15 @@ class _EventEditingScreenState extends State<EventEditingScreen> {
   Widget build(BuildContext context) {
     Size media = MediaQuery.of(context).size;
 
-    DateTime parsedTime =
-        DateFormat.jm().parse(startTime.format(context).toString());
+    //DateTime parsedTime = DateFormat.jm().parse(startTime.format(context).toString());
+    DateTime parsedTime = DateTime(startDate.year, startDate.month,
+        startDate.day, startTime.hour, startTime.minute);
     String formattedTime = DateFormat('HH:mm').format(parsedTime);
     startController.text = formattedTime;
 
-    DateTime parsedTime2 =
-        DateFormat.jm().parse(endTime.format(context).toString());
+    //DateTime parsedTime2 = DateFormat.jm().parse(endTime.format(context).toString());
+    DateTime parsedTime2 = DateTime(startDate.year, startDate.month,
+        startDate.day, endTime.hour, endTime.minute);
     String formattedTime2 = DateFormat('HH:mm').format(parsedTime2);
     endController.text = formattedTime2;
 

@@ -1,5 +1,3 @@
-import 'dart:ui';
-import 'package:workit/models/project.dart';
 import 'package:workit/models/user.dart';
 
 class Project {

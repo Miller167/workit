@@ -1,11 +1,6 @@
-import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter/material.dart';
 import 'package:workit/resources/constants.dart';
 import 'package:workit/screens/login_screen.dart';
-import 'package:workit/screens/overview_screen.dart';
-import 'package:workit/screens/schedule_screen.dart';
-import 'package:workit/screens/splash_screen.dart';
-import 'package:workit/screens/navbar_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +21,7 @@ class MyApp extends StatelessWidget {
           focusColor: kGrey5,
           fontFamily: 'NotoSansJP',
         ),
-        home: SplashScreen());
+        //home: SplashScreen());
+        home: LoginScreen());
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../resources/constants.dart';
 import 'CustomContainer.dart';
 
 class customOverviewTaskTile extends StatefulWidget {
@@ -35,12 +33,12 @@ class _customOverviewTaskTileState extends State<customOverviewTaskTile> {
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           child: Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     child: Icon(Icons.circle_outlined, size: media.width / 25)),
                 Container(
                   //margin: EdgeInsets.symmetric(vertical: 2.5),

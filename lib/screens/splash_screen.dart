@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:workit/screens/navbar_screen.dart';
-
-import '../models/user.dart';
-import '../resources/api_calls.dart';
+import 'package:workit/screens/login_screen.dart';
 
 //  ------------------- SPLASH SCREEN ---------------------
 //  Screen that returns the splash image
@@ -18,12 +14,12 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Future<dynamic> getData() async {
-    List users = await getUsers().onError((error, stackTrace) => false);
+    /*List users = await getUsers().onError((error, stackTrace) => false);
     List<User> parsedUsers = [];
     for (var element in users) {
       parsedUsers.add(User.fromMap(element));
     }
-    print(parsedUsers);
+    print(parsedUsers);*/
 
     return true;
   }
@@ -49,8 +45,11 @@ class _SplashScreenState extends State<SplashScreen> {
       },
       future: getData().then((value) {
         if (value) {
+          /*Navigator.push(
+              context, MaterialPageRoute(builder: (context) => NavbarScreen()));*/
+
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => NavbarScreen()));
+              context, MaterialPageRoute(builder: (context) => LoginScreen()));
         }
       }),
     );

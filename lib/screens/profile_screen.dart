@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workit/resources/constants.dart';
-
-import '../resources/api_calls.dart';
+import 'package:workit/screens/personal_documents_screen.dart';
 import '../widgets/CustomContainer.dart';
 import '../widgets/CustomCupertinoButton.dart';
 import '../widgets/CustomProfileButton.dart';
+import 'days_off_screen.dart';
 
 // -------------- PROFILE SCREEN -----------------
 //  This is an option of the navbar. The body returns an info card of the user
@@ -20,8 +20,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData media = MediaQuery.of(context);
@@ -91,15 +89,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: media.size.height / 30,
             ),
             CustomProfileButton(
-              media: media,
-              title: 'Documents',
-              onPressed: () {}
-            ),
+                media: media,
+                title: 'Documents',
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PersonalDocumentsScreen()))),
             CustomProfileButton(
-              media: media,
-              title: 'Time off',
-              onPressed: () {},
-            ),
+                media: media,
+                title: 'Time off',
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DaysOffScreen()))),
             CustomProfileButton(
               media: media,
               title: 'Account settings',

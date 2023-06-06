@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:workit/resources/api_calls.dart';
 import 'package:workit/resources/constants.dart';
 

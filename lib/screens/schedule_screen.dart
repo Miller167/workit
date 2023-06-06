@@ -48,8 +48,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     events.clear();
     projects.clear();
     projects = [Project.empty()];
-    List response = await getEvents();
-    List response2 = await getProjects();
+    List response = await getEventsByUserId(user.id ?? 0);
+    List response2 = await getProjectsByUserId(user.id ?? 0);
     response.forEach((element) {
       events.add(Event.fromMap(element));
     });
@@ -121,7 +121,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           start: start,
           end: end,
           project:
-              projects.firstWhere((element) => element.id == selectedProject));
+              projects.firstWhere((element) => element.id == selectedProject),
+          user: user);
 
       var response = await updateEvent(event.id ?? 0, event.toMap())
           .onError((error, stackTrace) => print(error));
@@ -145,14 +146,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         selectedProject = projects.firstWhere((element) => element.id == projectId);*/
         selectedProject = appointmentDetails.project.id!;
 
-        parsedTime =
-            DateFormat.jm().parse(selectedStart.format(context).toString());
-        String formattedTime = DateFormat('HH:mm').format(parsedTime);
+        String formattedTime =
+            DateFormat('HH:mm').format(appointmentDetails.startTime);
         startController.text = formattedTime;
 
-        parsedTime =
-            DateFormat.jm().parse(selectedEnd.format(context).toString());
-        formattedTime = DateFormat('HH:mm').format(parsedTime);
+        formattedTime = DateFormat('HH:mm').format(appointmentDetails.endTime);
         endController.text = formattedTime;
 
         showDialog(
@@ -463,9 +461,5 @@ class CustomAppointment extends Appointment {
       super.endTimeZone,
       super.location,
       super.startTimeZone,
-      super.recurrenceExceptionDates,
-      super.recurrenceId,
-      super.recurrenceRule,
-      super.resourceIds,
       required this.project});
 }

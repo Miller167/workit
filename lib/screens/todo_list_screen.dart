@@ -17,7 +17,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   Future<dynamic> getData() async {
     _todos.clear();
-    List resp = await getTodos();
+    List resp = await getTodosByUserId(user.id ?? 0);
     resp.forEach((element) {
       _todos.add(Todo.fromMap(element));
     });
@@ -28,7 +28,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 40, 20, 20),
+      padding: const EdgeInsets.fromLTRB(0, 40, 20, 20),
       child: Stack(
         children: [
           Column(
@@ -59,7 +59,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       return Container(
                         height: media.height / 1.3,
                         child: ListView(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                           children: _todos.map((Todo todo) {
                             return TodoItem(
                               todo: todo,
@@ -74,7 +74,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   }
 
                   // Displaying splash to indicate loading state
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 },
@@ -89,12 +89,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
             bottom: 0,
             right: 0,
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: FloatingActionButton(
                 onPressed: () => _displayDialog(),
                 tooltip: 'Add Item',
                 backgroundColor: secondaryColor,
-                child: Icon(Icons.add),
+                child: const Icon(Icons.add),
               ),
             ),
           ),
@@ -104,7 +104,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   Future<void> _addTaskItem(String title) async {
-    Map map = {'id': 0, 'title': title, 'isChecked': false};
+    Map map = {'title': title, 'isChecked': false, 'user': user.toMap()};
 
     var response = await createTodo(map);
     map['id'] = response['id'];

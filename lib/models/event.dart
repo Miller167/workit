@@ -1,5 +1,5 @@
-import 'dart:ui';
 import 'package:workit/models/project.dart';
+import 'package:workit/models/user.dart';
 
 // Event entity
 class Event {
@@ -10,6 +10,7 @@ class Event {
   late DateTime? endDatetime;
   late bool allDay;
   late Project? project;
+  late User? user;
 
   Event(
       {this.id,
@@ -18,7 +19,8 @@ class Event {
       required DateTime start,
       DateTime? end,
       required this.allDay,
-      this.project}) {
+      this.project,
+      required this.user}) {
     startDatetime = start;
     endDatetime = end;
   }
@@ -33,6 +35,7 @@ class Event {
         : null;
     allDay = object['allDay'] ?? false;
     project = Project.fromMap(object['project']);
+    user = object['user'] != null ? User.fromMap(object['user']) : null;
   }
 
   Map<String, dynamic> toMap() {
@@ -42,7 +45,8 @@ class Event {
       'startDatetime': startDatetime.millisecondsSinceEpoch,
       'endDatetime': endDatetime?.millisecondsSinceEpoch,
       'allDay': allDay,
-      'project': project?.toMap()
+      'project': project?.toMap(),
+      'user': user?.toMap(),
     };
   }
 
@@ -54,12 +58,13 @@ class Event {
       startDatetime,
       endDatetime,
       allDay,
-      project
+      project,
+      user
     ];
   }
 
   @override
   String toString() {
-    return 'Event{id: $id, title: $title, description: $description, startDatetime: $startDatetime, endDatetime: $endDatetime, allDay: $allDay, project: $project}';
+    return 'Event{id: $id, title: $title, description: $description, startDatetime: $startDatetime, endDatetime: $endDatetime, allDay: $allDay, project: $project, user: $user}';
   }
 }

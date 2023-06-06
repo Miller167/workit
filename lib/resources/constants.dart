@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../models/user.dart';
+
 //  -------------------- CONSTANTS FILE --------------------
 //  Constants used throughout the project
 
@@ -18,7 +20,4 @@ Color secondaryColor = const Color(0xFFe0afa0);
 
 //Color accentColor = const Color(0xFFFF5F36);
 
-const users = const {
-  'mking@uda.ad': '12345',
-  'hunter@gmail.com': 'hunter',
-};
+late User user;

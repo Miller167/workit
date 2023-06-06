@@ -1,9 +1,6 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:workit/resources/api_base_helper.dart';
-import 'package:workit/resources/api_calls.dart';
 import '../resources/constants.dart';
 import '../widgets/CustomContainer.dart';
 import '../widgets/CustomDivider.dart';

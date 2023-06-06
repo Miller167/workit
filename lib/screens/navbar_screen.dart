@@ -1,4 +1,3 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -56,12 +55,6 @@ class NavbarScreen extends StatelessWidget {
           title: "Home",
           activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
-          /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
-          initialRoute: "/",
-          routes: {
-            "/filter": (final context) => const InspectionsFilterScreen(),
-          },
-        ),*/
         ),
         PersistentBottomNavBarItem(
           icon: FaIcon(
@@ -71,12 +64,6 @@ class NavbarScreen extends StatelessWidget {
           title: "Punch clock",
           activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
-          /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
-          initialRoute: "/",
-          routes: {
-            "/filter": (final context) => const RecordsFilterScreen(),
-          },
-        ),*/
         ),
         PersistentBottomNavBarItem(
           icon: FaIcon(
@@ -86,12 +73,6 @@ class NavbarScreen extends StatelessWidget {
           title: "Profile",
           activeColorPrimary: secondaryColor,
           inactiveColorPrimary: Colors.grey,
-          /*routeAndNavigatorSettings: RouteAndNavigatorSettings(
-          initialRoute: "/",
-          routes: {
-            "/filter": (final context) => const RecordsFilterScreen(),
-          },
-        ),*/
         ),
       ];
 
@@ -132,49 +113,5 @@ class NavbarScreen extends StatelessWidget {
       navBarStyle:
           NavBarStyle.style6, // Choose the nav bar style with this property.
     );
-    /*return Scaffold(
-      extendBody: true,
-      */ /*bottomNavigationBar: CurvedNavigationBar(
-        index: _page,
-        height: media.height / 10,
-        backgroundColor: Colors.transparent,
-        color: kGrey4,
-        items: <Widget>[
-          FaIcon(
-            FontAwesomeIcons.list,
-            size: 25,
-            color: kGrey1,
-          ),
-          FaIcon(
-            FontAwesomeIcons.calendarCheck,
-            size: 25,
-            color: kGrey1,
-          ),
-          FaIcon(
-            FontAwesomeIcons.home,
-            size: 25,
-            color: kGrey1,
-          ),
-          FaIcon(
-            FontAwesomeIcons.clock,
-            size: 25,
-            color: kGrey1,
-          ),
-          FaIcon(
-            FontAwesomeIcons.user,
-            size: 25,
-            color: kGrey1,
-          ),
-        ],
-        onTap: (index) {
-          //When selected an option of the navbar, change the body
-          setState(() {
-            _page = index;
-          });
-        },
-        letIndexChange: (index) => true,
-      ),*/ /*
-      body: kNavBarScreens[_page],
-    );*/
   }
 }

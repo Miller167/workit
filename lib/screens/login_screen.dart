@@ -1,7 +1,10 @@
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter/material.dart';
 import 'package:workit/screens/navbar_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/user.dart';
+import '../resources/api_calls.dart';
 import '../resources/constants.dart';
 
 //  ------------------- LOGIN SCREEN -------------------
@@ -9,26 +12,28 @@ import '../resources/constants.dart';
 //  form with mail and password fields. After submitted, returns the StartScreen.
 
 class LoginScreen extends StatelessWidget {
-  Duration get loginTime => Duration(milliseconds: 2250);
+  Future<String> _authUser(LoginData data) async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
 
-  Future<String?> _authUser(LoginData data) {
     debugPrint('Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(data.name)) {
-        return 'User not exists';
-      }
-      if (users[data.name] != data.password) {
-        return 'Password does not match';
-      }
-      return null;
-    });
-  }
 
-  Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      return null;
-    });
+    Map loginRequest = {'email': data.name, 'password': data.password};
+
+    try {
+      Map response = await login(loginRequest);
+      user = User.fromMap(response);
+    } catch (e) {
+      return 'Something went wrong. Try again.';
+    }
+
+    await _prefs.setInt('id', user.id ?? 0);
+    await _prefs.setString('email', user.email);
+    await _prefs.setString('username', user.username);
+    await _prefs.setString('fullName', user.fullName);
+    await _prefs.setBool('administrator', user.administrator);
+    await _prefs.setDouble('totalDaysOff', user.totalDaysOff);
+
+    return '';
   }
 
   @override
@@ -37,7 +42,7 @@ class LoginScreen extends StatelessWidget {
       title: 'WORK IT',
       //logo: AssetImage('assets/images/ecorp-lightblue.png'),
       onLogin: _authUser,
-      onSignup: _signupUser,
+      hideForgotPasswordButton: true,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -13,6 +14,7 @@ import 'custom_exceptions.dart';
 
 class ApiBaseHelper {
   final String _baseUrl = "http://10.0.2.2:8080/";
+  //final String _baseUrl = "http://192.168.1.11 :8080/";
 
   Future<dynamic> get(String url,
       [String token = '', String tokenType = '']) async {
@@ -105,7 +107,11 @@ class ApiBaseHelper {
     switch (response.statusCode) {
       case 200:
         if (response.body != '') {
-          responseJson = json.decode(utf8.decode(response.bodyBytes));
+          if (response.bodyBytes.first < 0x7B) {
+            responseJson = response.body;
+          } else {
+            responseJson = json.decode(utf8.decode(response.bodyBytes));
+          }
         } else {
           responseJson = response.body;
         }
